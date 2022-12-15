@@ -7,7 +7,7 @@
   <br>
   
 ### 2. HTTP Method의 대표적인 4가지는 `GET`, `POST`, `PUT`, `DELETE` 가있는데 각각 어떤 상황에서 사용하셨나요?
-  - API
+  - ***API***
     (https://catkin-ermine-8f3.notion.site/533c3c57315a4d7c9ffe46a7394f263d?v=4643070dad9244b7ae21aab995db4a41)
   <br>
   
