@@ -7,7 +7,8 @@
   <br>
   
 ### 2. HTTP Method의 대표적인 4가지는 `GET`, `POST`, `PUT`, `DELETE` 가있는데 각각 어떤 상황에서 사용하셨나요?
-  - API(https://catkin-ermine-8f3.notion.site/533c3c57315a4d7c9ffe46a7394f263d?v=4643070dad9244b7ae21aab995db4a41)
+  - API
+    (https://catkin-ermine-8f3.notion.site/533c3c57315a4d7c9ffe46a7394f263d?v=4643070dad9244b7ae21aab995db4a41)
   <br>
   
 ### 3. RESTful한 API를 설계했나요? 어떤 부분이 그런가요? 어떤 부분이 그렇지 않나요?
