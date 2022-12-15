@@ -12,7 +12,7 @@ app.use("/", [postsRouter]);
 
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('assignment1');
   });
   
   
