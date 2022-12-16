@@ -8,7 +8,7 @@ connect();
 
 
 app.use(express.json());
-app.use("/", [postsRouter]);
+app.use("/api", [postsRouter]);
 
 
 app.get('/', (req, res) => {
