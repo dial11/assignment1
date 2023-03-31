@@ -13,36 +13,40 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - name: checkout release
-      uses: actions/checkout@v3
+      - name: Checkout source code.
+        uses: actions/checkout@v2
 
-    # Runs a single command using the runners shell 
-    - name: Clean temp directory
-      run: |
-        rm -rf temp_dir
-        mkdir temp_dir
-        cp -r $GITHUB_WORKSPACE/. temp_dir/
-        mv temp_dir/* .
-        rm -rf temp_dir/*
-        rmdir temp_dir
-      
-    - name: archive drcloud 
-      run: tar cvfz ./drcloud.tar.gz *
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # - name: delete package-lock.json
+      #   run: rm package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      # - name: build file
+      #   run: npm run build
+
+          
+      - name: zip distributions
+        run: zip -r together-zip.zip ./client/dist ./server ./appspec.yml ./scripts
        
-    - name: AWS configure credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.SECRET_KEY }}
-        aws-region: ap-northeast-2
-        
-    - name: upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./drcloud.tar.gz s3://bidnsales/archive/
-      
-    - name: deploy with AWS codeDeploy
-      run: aws deploy create-deployment
-        --application-name BNS_deploy
-        --deployment-config-name CodeDeployDefault.OneAtATime
-        --deployment-group-name BNSGroup
-        --s3-location bucket=bidnsales,bundleType=tgz,key=archive/drcloud.tar.gz
+      - name: AWS configure credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.SECRET_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./together-zip.zip s3://bidnsales/archive/
+
+      - name: deploy with AWS codeDeploy
+        run: aws deploy create-deployment
+          --application-name BNS_deploy
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name BNSGroup
+          --s3-location bucket=bidnsales,bundleType=tgz,key=archive/together-zip.zip
