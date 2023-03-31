@@ -14,39 +14,33 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        shell: bash
-        working-directory: study-app-server
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - name: checkout release
+      uses: actions/checkout@v3
 
-      - name: JDK 11 설치
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11.0.8
-
-      - name: ./gradlew 권한 설정
-        run: chmod +x ./gradlew
-
-      - name: 빌드
-        run: ./gradlew build
+    # Runs a single command using the runners shell 
+    - name: Clean temp directory
+      run: |
+        rm -rf *
+        cp -r $GITHUB_WORKSPACE . 
+      
+    - name: archive drcloud 
+      run: tar cvfz ./drcloud.tar.gz *
        
-      - name: AWS configure credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.SECRET_KEY }}
-          aws-region: ap-northeast-2
-
-      - name: upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./build.zip s3://bidnsales/archive/
-
-      - name: deploy with AWS codeDeploy
-        run: aws deploy create-deployment
-          --application-name BNS_deploy
-          --deployment-config-name CodeDeployDefault.OneAtATime
-          --deployment-group-name BNSGroup
-          --s3-location bucket=bidnsales,bundleType=tgz,key=archive/build.zip
+    - name: AWS configure credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.SECRET_KEY }}
+        aws-region: ap-northeast-2
+        
+    - name: upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./drcloud.tar.gz s3://bidnsales/archive/
+      
+    - name: deploy with AWS codeDeploy
+      run: aws deploy create-deployment
+        --application-name BNS_deploy
+        --deployment-config-name CodeDeployDefault.OneAtATime
+        --deployment-group-name BNSGroup
+        --s3-location bucket=bidnsales,bundleType=tgz,key=archive/drcloud.tar.gz
