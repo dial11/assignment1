@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node.js CI
+name: BNS CI
 
 on:
   push:
@@ -11,9 +11,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: checkout release
@@ -22,8 +20,12 @@ jobs:
     # Runs a single command using the runners shell 
     - name: Clean temp directory
       run: |
-        rm -rf *
-        cp -r $GITHUB_WORKSPACE . 
+        rm -rf temp_dir
+        mkdir temp_dir
+        cp -r $GITHUB_WORKSPACE/. temp_dir/
+        mv temp_dir/* .
+        rm -rf temp_dir/*
+        rmdir temp_dir
       
     - name: archive drcloud 
       run: tar cvfz ./drcloud.tar.gz *
